@@ -15,8 +15,8 @@ services:
   moodle:
     image: "docker.io/bitnami/moodle:4.1"
     ports:
-      - "80:8080"
-      - "443:8443"
+      - "8088:8080"
+      - "4433:8443"
     environment:
       MOODLE_DATABASE_HOST: mariadb
       MOODLE_DATABASE_PORT_NUMBER: 3306
@@ -29,7 +29,58 @@ services:
     depends_on:
       - mariadb
 
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      # /path/to/this-folder/prometheus/:/etc/prometheus
+      - /etc/prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/prometheus/config-prometheus.yml"
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    restart: unless-stopped
+
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter
+    command:
+      - '--path.rootfs=/host'
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - '/:/host:ro,rslave'
+  cadvisor:
+    # TODO: latest tag is not updated, check latest release https://github.com/google/cadvisor/releases 
+    image: gcr.io/cadvisor/cadvisor:v0.45.0     
+    container_name: cadvisor
+    ports:
+      - "8080:8080"
+    network_mode: host
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    devices:
+      - /dev/kmsg
+    restart: unless-stopped
+    privileged: true
+
 volumes:
   mariadb_data:
   moodle_data:
   moodledata_data:
+  prometheus_data:
+  grafana_data:
