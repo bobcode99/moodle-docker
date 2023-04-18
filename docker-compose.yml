@@ -67,7 +67,7 @@ services:
     ports:
       - "8080:9092"
     command:
-      - '-port=9092'
+      - "-port=9092"
     network_mode: host
     volumes:
       - /:/rootfs:ro
