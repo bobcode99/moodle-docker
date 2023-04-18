@@ -11,7 +11,7 @@ services:
       MARIADB_COLLATE: utf8mb4_unicode_ci
     volumes:
       - mariadb_data:/bitnami/mariadb
-  
+
   moodle:
     image: "docker.io/bitnami/moodle:4.1"
     ports:
@@ -35,12 +35,13 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      # /path/to/this-folder/prometheus/:/etc/prometheus
-      - /etc/prometheus:/etc/prometheus
+      - /etc/prometheus:/etc/prometheus # !!! CHANGE ME TO THIS: /path/to/this-folder/prometheus/:/etc/prometheus
       - prometheus_data:/prometheus
     restart: unless-stopped
     command:
       - "--config.file=/etc/prometheus/config-prometheus.yml"
+    depends_on:
+      - cadvisor
 
   grafana:
     image: grafana/grafana-oss:latest
@@ -55,17 +56,17 @@ services:
     image: quay.io/prometheus/node-exporter:latest
     container_name: node_exporter
     command:
-      - '--path.rootfs=/host'
+      - "--path.rootfs=/host"
     pid: host
     restart: unless-stopped
     volumes:
-      - '/:/host:ro,rslave'
+      - "/:/host:ro,rslave"
   cadvisor:
-    # TODO: latest tag is not updated, check latest release https://github.com/google/cadvisor/releases 
-    image: gcr.io/cadvisor/cadvisor:v0.45.0     
+    # TODO: latest tag is not updated, check latest release https://github.com/google/cadvisor/releases
+    image: gcr.io/cadvisor/cadvisor:v0.45.0
     container_name: cadvisor
     ports:
-      - "8080:9092"
+      - "9092:9092"
     command:
       - "-port=9092"
     network_mode: host
