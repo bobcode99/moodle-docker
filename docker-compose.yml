@@ -84,12 +84,12 @@ services:
     privileged: true
 
   apache_exporter:
-    image: "bitnami/apache-exporter:0.13.1"
+    image: "docker.io/bitnami/apache-exporter:0.13.1-debian-11-r1"
     container_name: apache_exporter
     ports:
       - "9117:9117"
     command:
-      - /bin/apache_exporter
+      # - /bin/apache_exporter
       - --scrape_uri
       - http://moodle:8080/server-status?auto
     environment:
