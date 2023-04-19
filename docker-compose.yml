@@ -26,7 +26,7 @@ services:
       MOODLE_DATABASE_NAME: bitnami_moodle
       ALLOW_EMPTY_PASSWORD: "yes"
     volumes:
-      - /path/to/this-folder/moodle/httpd-vhosts.conf:/opt/bitnami/apache/conf/vhosts/httpd-vhosts.conf:ro # !!! CHANGE ME TO THIS: /path/to/this-folder/prometheus/:/etc/prometheus
+      # - /path/to/this-folder/moodle/httpd-vhosts.conf:/opt/bitnami/apache/conf/vhosts/httpd-vhosts.conf:ro # !!! CHANGE ME TO THIS: /path/to/this-folder/prometheus/:/etc/prometheus
       - moodle_data:/bitnami/moodle
       - moodledata_data:/bitnami/moodledata
     depends_on:
@@ -89,7 +89,9 @@ services:
     ports:
       - "9117:9117"
     command:
-      - "--scrape_uri http://moodle:8080/server-status?auto"
+      - /bin/apache_exporter
+      - --scrape_uri
+      - http://moodle:8080/server-status?auto
     environment:
       APACHE_EXPORTER_STATUS_URL: "http://moodle:8080/server-status?auto"
     depends_on:
