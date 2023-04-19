@@ -80,6 +80,16 @@ services:
     restart: unless-stopped
     privileged: true
 
+  apache_exporter:
+    image: "bitnami/apache-exporter:0.13.1"
+    container_name: apache_exporter
+    ports:
+      - "9117:9117"
+    environment:
+      APACHE_EXPORTER_STATUS_URL: "http://moodle:8080/server-status?auto"
+    depends_on:
+      - moodle
+
 volumes:
   mariadb_data:
   moodle_data:
