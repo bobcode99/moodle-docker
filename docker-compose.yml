@@ -88,6 +88,8 @@ services:
     container_name: apache_exporter
     ports:
       - "9117:9117"
+    command:
+      - "--scrape_uri http://moodle:8080/server-status?auto"
     environment:
       APACHE_EXPORTER_STATUS_URL: "http://moodle:8080/server-status?auto"
     depends_on:
